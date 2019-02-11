@@ -21,6 +21,8 @@
   const _log_levels = ['all', 'trace', 'debug', 'info', 'warn', 'error', 'fatal', 'off'];
   const _action = ['', 'trace', 'debug', 'info', 'warn', 'error', 'fatal'];
 
+  let formatterMap = {};
+
   let idx = 0;
 
   const [LEVELS, LEVELS_BY_NAME, LEVELS_BY_ID] = ((items) => {
@@ -38,6 +40,9 @@
   })(_log_levels);
 
   const utcDate = () => (new Date()).toISOString().substr(0, 23).replace('T', ' ');
+  const getCaller = (callee) => {
+    return (callee.caller || {}).name || '';
+  }
 
   const _globalConfig = {};
 
@@ -50,17 +55,17 @@
   };
 
   const _defaultOpts = {
-    app: '---',
+    app: '',
     level: LEVELS.ALL,
-    username: '--',
-    file: '---',
-    method: '---',
+    username: '',
+    file: '',
+    method: '',
     delimiter: '\t',
     format: '%d [%p] %A %t %f %M %m',
   };
-  //'ts, level,
-  const generator = (opts, i) => {
-    return (message) => {
+
+  function generator(opts, i) {
+    return function(message) {
       if (i >= opts.level) {
         const {app, username, file, method, formatter} = opts;
         const text = formatter({
@@ -69,7 +74,7 @@
           app,
           username,
           file,
-          method, message});
+          method: method || getCaller(arguments.callee), message});
         console.log(text);
       }
     }
@@ -83,7 +88,11 @@
     }
     let _opts = Object.assign({}, _defaultOpts, getGlobalConfig(), _userOpts);
     console.log(_opts);
-    _opts.formatter = getFormatter(_opts.format);
+    const fmtter = formatterMap[_opts.format] || getFormatter(_opts.format);
+    if(!formatterMap[_opts.format]) {
+      formatterMap[_opts.format] = fmtter;
+    }
+    _opts.formatter = fmtter;
     let instant = _action.reduce((p, k, i) => {
       if (k) {
         p[k] = generator(_opts, i,);

@@ -1,15 +1,22 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <title>Title of the document</title>
-    <script src="log4js.js"></script>
-    <!--<script src="index.js"></script>-->
-    <script src="index-2.js"></script>
+  <meta charset="UTF-8">
+  <title>Title of the document</title>
+  <script src="log4js.js"></script>
 </head>
 
 <body>
 Content of the document......
+<script type="text/javascript">
+  Object.assign(log4js.config, {level: 'warn', username: '123SETH', app: 'my-app'});
+
+  window.logger = log4js.getLogger();
+
+</script>
+<!--<script src="index.js"></script>-->
+<script src="index-2.js"></script>
+
 </body>
 
 </html>
