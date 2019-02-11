@@ -1,7 +1,7 @@
 (function aa() {
   console.warn('Logger 4');
-  const logger1 = logger.set({file: 'index-2.js'});
-  /*logger1.trace('Trace:: cheese testing');
+  const logger1 = logger.set({});
+  logger1.trace('Trace:: cheese testing');
   logger1.debug('Debug:: Got cheese.');
   logger1.info('Info:: Cheese is Comté.');
   logger1.warn('WARN:: Cheese is quite smelly.');
@@ -27,19 +27,20 @@
   logger3.info('Info:: Cheese is Comté.');
   logger3.warn('WARN:: Cheese is quite smelly.');
   logger3.error('Error:: Cheese is too ripe!');
-  logger3.fatal('Fatal:: Cheese was breeding ground for listeria.');*/
+  logger3.fatal('Fatal:: Cheese was breeding ground for listeria.');
 
 
 
 
 })();
+const logger1 = logger.set({file: 'ABC.js'});
 console.warn('Logger 7');
 class ABC {
   constructor() {
     this.getAA = this.getAA.bind(this);
   }
   getAA(myMsg) {
-    logger.error(myMsg);
+    logger1.error(myMsg);
   }
 }
 

@@ -41,7 +41,12 @@
 
   const utcDate = () => (new Date()).toISOString().substr(0, 23).replace('T', ' ');
   const getCaller = (callee) => {
-    return (callee.caller || {}).name || '';
+    var stackTrace = (new Error()).stack; // Only tested in latest FF and Chrome
+    var callerName = (new Error()).stack.replace(/^Error\s+/, '');
+    const fullCallerName = callerName.split("\n")[2].split('at ').pop();
+    let [fnName, fileName] = fullCallerName.split(' (');
+    fileName = !fileName ?  '' : fileName.substring(fileName.lastIndexOf('/') + 1, fileName.length - 1);
+    return {fnName, fileName};
   }
 
   const _globalConfig = {};
@@ -61,20 +66,21 @@
     file: '',
     method: '',
     delimiter: '\t',
-    format: '%d [%p] %A %t %f %M %m',
+    format: '%d [%p] %A %t %f [%M] %m',
   };
 
   function generator(opts, i) {
     return function(message) {
       if (i >= opts.level) {
         const {app, username, file, method, formatter} = opts;
+        const {fnName, fileName} = getCaller();
         const text = formatter({
           timestamp: utcDate(),
           level: LEVELS_BY_ID[i],
           app,
           username,
-          file,
-          method: method || getCaller(arguments.callee), message});
+          file: file || fileName,
+          method: method || fnName, message});
         console.log(text);
       }
     }
@@ -87,7 +93,6 @@
       _userOpts.level = LEVELS.hasOwnProperty(_userOpts.level) ? LEVELS[_userOpts.level] : LEVELS.ALL;
     }
     let _opts = Object.assign({}, _defaultOpts, getGlobalConfig(), _userOpts);
-    console.log(_opts);
     const fmtter = formatterMap[_opts.format] || getFormatter(_opts.format);
     if(!formatterMap[_opts.format]) {
       formatterMap[_opts.format] = fmtter;
