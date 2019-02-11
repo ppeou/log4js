@@ -2,6 +2,7 @@
 
   const _log_levels = ['all', 'trace', 'debug', 'info', 'warn', 'error', 'fatal', 'off'];
 
+
   const [LEVELS, LEVELS_BY_NAME, LEVELS_BY_ID] = ((items) => {
     let uk;
     return items.reduce((p, k, i) => {
@@ -13,12 +14,11 @@
 
       return p;
     }, [{}, {}, {}]);
-  })(_log_levels);
-  console.log(LEVELS);
+  })(_log_levels);  console.log(LEVELS);
 
   const utcDate = () => (new Date()).toISOString().substr(0,23).replace('T', ' ');
 
-  const getText = () =>  `${utcDate()} ${} ${} ${} ${}`;
+  const getText = (levelId, userId, prefix, message ) =>  `${utcDate()} [${userId}] [${LEVELS_BY_ID[levelId]}] ${file} ${prefix} ${message}`;
 
   const logger = ({level, prefix, username}) => {
 
